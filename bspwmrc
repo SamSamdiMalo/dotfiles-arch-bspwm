@@ -1,0 +1,93 @@
+#! /bin/sh
+# Note: This file could be are in the bspwm carpet (`/home/[user]/.config/bspwm/[this file]`)
+# =============================================================================
+# AUTOSTART
+# Core programs that must run in the background on startup.
+# =============================================================================
+
+# Starts sxhkd (the keyboard shortcut manager) if it's not already running.
+# Without this, you won't be able to open apps or navigate using your keyboard
+pgrep -x sxhkd > /dev/null || sxhkd &
+
+# =============================================================================
+# WORKSPACES
+# =============================================================================
+
+# Defines the names of your workspaces/desktops.
+# You can change Roman numerals to regular numbers (1 2 3 4),
+# names (dev, www, chat), or even glyphs/icons (Nerd Fonts).
+bspc monitor -d I II III IV
+
+# =============================================================================
+# APPEARANCE (BORDERS & GAPS)
+# =============================================================================
+
+# border_width: The thickness of the border around your windows (in pixels).
+bspc config border_width                        2
+
+# window_gap: The empty space between windows. 
+# Increase this number if you prefer a more spaced-out look
+bspc config window_gap                          8
+
+# =============================================================================
+# BEHAVIOR & PADDING
+# =============================================================================
+
+# split_ratio: Defines how the screen splits when opening a new window (0.52 = almost half).
+bspc config split_ratio                         0.52
+
+# Monocle mode: Removes borders and gaps when a single window is maximized.
+bspc config borderless_monocle                  true
+bspc config gapless_monocle                     true
+
+# focus_follows_pointer: Moving your mouse over a window automatically focuses it.
+bspc config focus_follows_pointer               true
+
+# Paddings: Inner empty space reserved at the screen edges.
+# 'top_padding' is crucial here because it leaves a 10px gap 
+# so the status bar (lemonbar) does not overlap your windows.
+bspc config top_padding                         10
+bspc config bottom_padding                      8
+bspc config left_padding                        8
+bspc config right_padding                       8
+
+# =============================================================================
+# BORDER COLORS (GRUVBOX THEME)
+# Feel free to change these HEX codes to fit your favorite color palette (e.g., Dracula, Nord).
+# =============================================================================
+
+bspc config normal_border_color                 "#458588" # Background / Unfocused windows
+bspc config active_border_color                 "#ebdbb2" # Active windows (visible, but without active focus)
+bspc config focused_border_color                "#fb4934" # The window you are currently typing/working on
+
+# =============================================================================
+# WINDOW RULES
+# Force specific applications to behave a certain way when launched 
+# (e.g., launch on a specific workspace, open floating, fixed size, etc.).
+# =============================================================================
+
+# Quick tips:
+# state=floating : Makes the window float traditionally, allowing you to move/resize it with the mouse.
+# desktop='^2'   : Sends the application straight to the second workspace upon startup.
+
+# don't copy all of this, if you don't have every of below programs
+bspc rule -a mplayer2 state=floating
+bspc rule -a Kupfer.py focus=on
+bspc rule -a Screenkey manage=off
+bspc rule -a "Tor Browser" desktop='^9' state=floating
+bspc rule -a Alacritty:Mail state=floating rectangle=1000x700+100+100
+
+# =============================================================================
+# VISUALS & UI AUTOSTART
+# =============================================================================
+
+# Restart Picom (the compositor handling window transparency, shadows, and screen tearing prevention).
+pkill picom; picom &
+
+# hsetroot: Sets a solid background color.
+# If you prefer a wallpaper image, comment this out and use: feh --bg-fill /path/to/wallpaper.jpg &
+hsetroot -solid "#282828" &
+
+# Kills any previous status bar instance and launches Lemonbar with custom geometry and fonts.
+pkill lemonbar
+~/.config/lemonbar/lemonbar.sh | lemonbar -p -g "x26" -B "#1c1e20" -F "#d8dee9" -f "JetBrainsMono Nerd Font:size=10" &
