@@ -1,4 +1,4 @@
-# Arch Linux Minimalist Programming Environment
+Arch Linux Minimalist Programming Environment
 
 Repository containing the configuration files (dotfiles) and optimization steps used to revive a legacy 2007 machine into a high-performance environment for software development.
 
@@ -22,3 +22,18 @@ Repository Structure
 - `.config/bspwm/`: Window manager behavior and workspaces.
 - `.config/sxhkd/`: Custom keyboard shortcuts for navigation and efficiency.
 - `.config/lemonbar/`: Minimalist status bar configuration.
+
+Core Keybindings (sxhkd)
+- `Super + Enter`: Open terminal (`Alacritty`)
+- `Super + d`: Open program launcher (`rofi`)
+- `Super + w`: Quit/Close focused window
+- `Super + 1-9`: Switch workspaces
+
+How to Replicate (Installation)
+> **Work in Progress**
+
+Once the files are up, the general installation process will require:
+1. Installing dependencies: `sudo pacman -Sy bspwm sxhkd alacritty rofi xorg-xinit`
+2. Cloning this repository.
+3. Copying the configurations to your local directory: `cp -r .config/* ~/.config/`
+4. And copying the `.xinitrc` file to your home.
