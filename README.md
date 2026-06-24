@@ -2,7 +2,7 @@
 
 Repository containing the configuration files (dotfiles) and optimization steps used to revive a legacy 2007 machine into a high-performance environment for software development.
 
-## 📊 System Specs & Performance
+System Specs & Performance
 
 | Metric | Specification / Result |
 | :--- | :--- |
@@ -13,12 +13,12 @@ Repository containing the configuration files (dotfiles) and optimization steps 
 | **Boot Time** | ~20 seconds (Systemd-analyzed) |
 | **Idle RAM Usage** | ~505.48 MiB (17%) |
 
-## 🛠️ Key Optimizations
+Key Optimizations
 - **Window Manager:** Replaced heavy Desktop Environments (like GNOME/KDE) with `bspwm` to maximize CPU/RAM availability for development tools.
 - **Display Server:** Minimal Xorg setup without a display manager (booting directly via `startx` / `.xinitrc` to save boot time).
 - **Terminal & Editor:** Alacritty + Helix.
 
-## 📂 Repository Structure
+Repository Structure
 - `.config/bspwm/`: Window manager behavior and workspaces.
 - `.config/sxhkd/`: Custom keyboard shortcuts for navigation and efficiency.
 - `.config/lemonbar/`: Minimalist status bar configuration.
