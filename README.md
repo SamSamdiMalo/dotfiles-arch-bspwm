@@ -33,7 +33,7 @@ How to Replicate (Installation)
 > **Work in Progress**
 
 Once the files are up, the general installation process will require:
-1. Installing dependencies: `sudo pacman -Sy bspwm sxhkd alacritty rofi xorg-xinit`
+1. Installing dependencies: `sudo pacman -Sy bspwm sxhkd alacritty rofi picom hsetroot xorg-xinit`
 2. Cloning this repository.
 3. Copying the configurations to your local directory: `cp -r .config/* ~/.config/`
 4. And copying the `.xinitrc` file to your home.
