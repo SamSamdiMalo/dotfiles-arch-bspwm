@@ -10,7 +10,7 @@ System Specs & Performance
 | **RAM** | 2.89 GiB DDR2 (two slots) |
 | **OS** | Arch Linux (x86_64) |
 | **Window Manager** | bspwm + sxhkd |
-| **Boot Time** | ~20 seconds (Systemd-analyzed) |
+| **Boot Time** | ~20 seconds (systemd-analyze) |
 | **Idle RAM Usage** | ~505.48 MiB (17%) |
 
 Key Optimizations
