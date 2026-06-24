@@ -1,5 +1,5 @@
 #! /bin/sh
-# Note: This file could be are in the bspwm carpet (`/home/[user]/.config/bspwm/[this file]`)
+# Note: This file belongs in your bspwm directory: ~/.config/bspwm/bspwmrc
 # =============================================================================
 # AUTOSTART
 # Core programs that must run in the background on startup.
@@ -70,7 +70,7 @@ bspc config focused_border_color                "#fb4934" # The window you are c
 # state=floating : Makes the window float traditionally, allowing you to move/resize it with the mouse.
 # desktop='^2'   : Sends the application straight to the second workspace upon startup.
 
-# don't copy all of this, if you don't have every of below programs
+# Note: Only keep the rules for the applications you actually have installed.
 bspc rule -a mplayer2 state=floating
 bspc rule -a Kupfer.py focus=on
 bspc rule -a Screenkey manage=off
@@ -91,3 +91,30 @@ hsetroot -solid "#282828" &
 # Kills any previous status bar instance and launches Lemonbar with custom geometry and fonts.
 pkill lemonbar
 ~/.config/lemonbar/lemonbar.sh | lemonbar -p -g "x26" -B "#1c1e20" -F "#d8dee9" -f "JetBrainsMono Nerd Font:size=10" &
+
+# =============================================================================
+# FONTS RECOMMENDATION & INSTALLATION GUIDE
+# =============================================================================
+# Note: You can use any font you like, but it is highly recommended to use 
+# "JetBrainsMono Nerd Font" or any other Nerd Font to display icons correctly.
+#
+# Quick Guide to install Nerd Fonts on Arch Linux:
+#
+# 1. Install via pacman (Official Repositories):
+#    sudo pacman -S ttf-jetbrains-mono-nerd
+#
+#    *Alternative* (To search for other available Nerd Fonts):
+#    sudo pacman -Ss ttf-*-nerd
+#
+# 2. Manual Installation (If downloading the .ttf/.otf file from the web):
+#    - Move the font files to the system directory:
+#      sudo cp *.ttf /usr/share/fonts/TTF/
+#    - Or move them to your user directory:
+#      mkdir -p ~/.local/share/fonts && cp *.ttf ~/.local/share/fonts/
+#
+# 3. Refresh the system font cache (Crucial step for the OS to read it):
+#    fc-cache -fv
+#
+# 4. Verify it is correctly installed:
+#    fc-list | grep -i "Nerd Font"
+# =============================================================================
