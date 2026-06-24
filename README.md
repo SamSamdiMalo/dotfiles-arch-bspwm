@@ -7,19 +7,18 @@ Repository containing the configuration files (dotfiles) and optimization steps 
 | Metric | Specification / Result |
 | :--- | :--- |
 | **CPU** |  Intel(R) Pentium(R) Dual E2180 (2) @ 2.00 GHz |
-| **RAM** | 2 GB DDR2 |
+| **RAM** | 2.89 GiB DDR2 (two slots) |
 | **OS** | Arch Linux (x86_64) |
 | **Window Manager** | bspwm + sxhkd |
 | **Boot Time** | ~20 seconds (Systemd-analyzed) |
-| **Idle RAM Usage** | ~[Ejemplo: 80MB - 120MB] |
+| **Idle RAM Usage** | ~505.48 MiB (17%) |
 
 ## 🛠️ Key Optimizations
 - **Window Manager:** Replaced heavy Desktop Environments (like GNOME/KDE) with `bspwm` to maximize CPU/RAM availability for development tools.
 - **Display Server:** Minimal Xorg setup without a display manager (booting directly via `startx` / `.xinitrc` to save boot time).
-- **Terminal & Editor:** [Menciona aquí tu terminal, ej: Alacritty, Kitty] + [Tu editor, ej: Neovim, VS Code minimal].
+- **Terminal & Editor:** Alacritty + Helix.
 
 ## 📂 Repository Structure
 - `.config/bspwm/`: Window manager behavior and workspaces.
 - `.config/sxhkd/`: Custom keyboard shortcuts for navigation and efficiency.
-- `.config/polybar/`: Minimalist status bar configuration.
-- `scripts/`: Custom shell scripts for system maintenance.
+- `.config/lemonbar/`: Minimalist status bar configuration.
