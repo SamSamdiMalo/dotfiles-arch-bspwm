@@ -1,0 +1,151 @@
+# > Note: This file belongs in your sxhkd directory: ~/.config/sxhkd/sxhkdrc
+# =============================================================================
+# SXHKD CONFIGURATION FILE (Keybindings)
+# =============================================================================
+#
+# PRO TIP:
+# 'super' is usually the Windows / Command key.
+# sxhkd uses a very clever bracket {} syntax to save space. 
+# For example, `super + {_,shift + }w` running `bspc node -{c,k}` means:
+#   1. super + w          -> close the window gently (-c)
+#   2. super + shift + w  -> kill the window forcefully (-k)
+# =============================================================================
+
+# =============================================================================
+# APPLICATION LAUNCHERS (WM Independent)
+# =============================================================================
+
+# Launch the terminal emulator (Alacritty)
+super + Return
+	alacritty
+
+# Launch the application menu
+# Note: @space means the command runs when the spacebar is released.
+# You can change 'dmenu_run' to 'rofi -show drun' if you prefer Rofi.
+super + @space
+	dmenu_run
+
+# =============================================================================
+# BSPWM SYSTEM CONTROLS
+# =============================================================================
+
+# Quit or restart bspwm
+# super + alt + q = Quit completely (logs you out)
+# super + alt + r = Restart bspwm (useful after editing bspwmrc)
+super + alt + {q,r}
+	bspc {quit,wm -r}
+
+# Close or kill a window
+# super + w = Close gracefully
+# super + shift + w = Kill forcefully (if a program freezes)
+super + {_,shift + }w
+	bspc node -{c,k}
+
+# Alternate between the tiled layout and monocle (fullscreen-like) layout
+super + m
+	bspc desktop -l next
+
+# Send the newest marked node to the newest preselected node
+super + y
+	bspc node newest.marked.local -n newest.!automatic.local
+
+# Swap the current window with the biggest window on the screen
+super + g
+	bspc node -s biggest.window
+
+# =============================================================================
+# WINDOW STATES & FLAGS
+# =============================================================================
+
+# Change the window state (how it behaves on the screen)
+# t = Tiled (Normal behavior)
+# shift + t = Pseudo-tiled (Keeps its original size but stays in the grid)
+# s = Floating (Moves freely like in traditional OS)
+# f = Fullscreen
+super + {t,shift + t,s,f}
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# Set specific window flags
+# m = Marked, x = Locked (cannot be closed), y = Sticky (shows on all desktops), z = Private
+super + ctrl + {m,x,y,z}
+	bspc node -g {marked,locked,sticky,private}
+
+# =============================================================================
+# FOCUS & SWAP (NAVIGATION)
+# Note: h, j, k, l are the standard Vim directional keys (Left, Down, Up, Right)
+# =============================================================================
+
+# Focus the window in the given direction
+# super + [h,j,k,l] = Move focus
+# super + shift + [h,j,k,l] = Swap the current window with the one in that direction
+super + {_,shift + }{h,j,k,l}
+	bspc node -{f,s} {west,south,north,east}
+
+# Focus the node for the given path jump (Parent/Brother/First/Second)
+super + {p,b,comma,period}
+	bspc node -f @{parent,brother,first,second}
+
+# Focus the next/previous window in the current desktop
+super + {_,shift + }c
+	bspc node -f {next,prev}.local.!hidden.window
+
+# Focus the next/previous desktop (workspace) in the current monitor
+super + bracket{left,right}
+	bspc desktop -f {prev,next}.local
+
+# Focus the last used window or desktop
+super + {grave,Tab}
+	bspc {node,desktop} -f last
+
+# Focus the older or newer window in the focus history
+super + {o,i}
+	bspc wm -h off; \
+	bspc node {older,newer} -f; \
+	bspc wm -h on
+
+# =============================================================================
+# DESKTOPS / WORKSPACES
+# =============================================================================
+
+# Focus or send a window to a specific desktop
+# super + [1-9] = Go to workspace [1-9]
+# super + shift + [1-9] = Send the current window to workspace [1-9]
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+# =============================================================================
+# PRESELECTION
+# Allows you to tell bspwm exactly where the *next* opened window should go
+# =============================================================================
+
+# Preselect the direction (splits the space before opening the app)
+super + ctrl + {h,j,k,l}
+	bspc node -p {west,south,north,east}
+
+# Preselect the ratio (how much screen the next app will take)
+super + ctrl + {1-9}
+	bspc node -o 0.{1-9}
+
+# Cancel the preselection for the focused window
+super + ctrl + space
+	bspc node -p cancel
+
+# Cancel the preselection for the entire focused desktop
+super + ctrl + shift + space
+	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
+
+# =============================================================================
+# RESIZING & MOVING
+# =============================================================================
+
+# Expand a window by moving one of its sides outward
+super + alt + {h,j,k,l}
+	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+
+# Contract a window by moving one of its sides inward
+super + alt + shift + {h,j,k,l}
+	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+# Move a floating window using the arrow keys
+super + {Left,Down,Up,Right}
+	bspc node -v {-20 0,0 20,0 -20,20 0}
