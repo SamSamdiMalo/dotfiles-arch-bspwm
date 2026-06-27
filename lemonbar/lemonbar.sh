@@ -1,5 +1,4 @@
 #!/bin/dash
-
 # Color Configuration
 BG="#1c1e20"
 FG="#d8dee9"
@@ -62,18 +61,23 @@ cpu() {
 }
 
 workspaces() {
-    FOCUSED=$(bspc query -D -d focused --names 2>/dev/null)
+    STATE=$(bspc wm -g | tr ':' ' ')
     OUT=""
-    # Iteramos sobre los 4 escritorios
-    for i in 1 2 3 4; do
-        if [ "$i" = "$FOCUSED" ]; then
-            # Si es el activo, ponle fondo verde y texto oscuro
-            OUT="$OUT %{B$GREEN}%{F$BG}  $i  %{B-}%{F-} "
+
+    for item in $STATE; do
+        FLAG=$(echo "$item" | cut -c1)
+        NAME=$(echo "$item" | cut -c2-)
+        if [ "$FLAG" = "W" ] || [ "$FLAG" = "M" ] || [ "$FLAG" = "m" ] || [ "$FLAG" = "G" ]; then
+            continue
+        fi
+
+        if [ "$FLAG" = "O" ] || [ "$FLAG" = "F" ]; then
+            OUT="$OUT %{B$GREEN}%{F$BG}  $NAME  %{B-}%{F-} "
         else
-            # Si no es el activo, ponle texto verde normal
-            OUT="$OUT %{F$GREEN} $i %{F-} "
+            OUT="$OUT %{F$GREEN} $NAME %{F-} "
         fi
     done
+
     echo "$OUT"
 }
 
