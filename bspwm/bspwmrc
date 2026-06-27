@@ -16,7 +16,7 @@ pgrep -x sxhkd > /dev/null || sxhkd &
 # Defines the names of your workspaces/desktops.
 # You can change Roman numerals to regular numbers (1 2 3 4),
 # names (dev, www, chat), or even glyphs/icons (Nerd Fonts).
-bspc monitor -d I II III IV V VI
+bspc monitor -d I II III IV
 
 # =============================================================================
 # APPEARANCE (BORDERS & GAPS)
