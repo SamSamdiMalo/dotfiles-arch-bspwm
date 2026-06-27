@@ -22,6 +22,7 @@ Repository Structure
 - `.config/bspwm/`: Window manager behavior and workspaces.
 - `.config/sxhkd/`: Custom keyboard shortcuts for navigation and efficiency.
 - `.config/lemonbar/`: Minimalist status bar configuration.
+- `.xinitrc`: It configures and starts your X11 session.
 
 Core Keybindings (sxhkd)
 - `Super + Enter`: Open terminal (`Alacritty`)
