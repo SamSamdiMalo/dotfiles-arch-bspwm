@@ -67,20 +67,21 @@ workspaces() {
     for item in $STATE; do
         FLAG=$(echo "$item" | cut -c1)
         NAME=$(echo "$item" | cut -c2-)
-        if [ "$FLAG" = "W" ] || [ "$FLAG" = "M" ] || [ "$FLAG" = "m" ] || [ "$FLAG" = "G" ]; then
+
+        if [ "$FLAG" = "W" ] || [ "$FLAG" = "M" ] || [ "$FLAG" = "m" ] || \
+           [ "$FLAG" = "G" ] || [ "$FLAG" = "L" ] || [ "$FLAG" = "T" ]; then
             continue
         fi
 
-        if [ "$FLAG" = "O" ] || [ "$FLAG" = "F" ]; then
+        if [ "$FLAG" = "F" ] || [ "$FLAG" = "O" ]; then
             OUT="$OUT %{B$GREEN}%{F$BG}  $NAME  %{B-}%{F-} "
-        else
+        elif [ "$FLAG" = "f" ] || [ "$FLAG" = "o" ]; then
             OUT="$OUT %{F$GREEN} $NAME %{F-} "
         fi
     done
 
     echo "$OUT"
 }
-
 # --- CACHED MODULES (Updated conditionally to save CPU cycles) ---
 
 network() {
@@ -113,6 +114,6 @@ while true; do
     # Output to Lemonbar
     echo "%{l}$(workspaces) $CURRENT_NET $(cpu_temp)%{c}$(clock)%{r}$(cpu) $(ram) $CURRENT_DISK $(volume) "
     
-    sleep 1
+    sleep 0.5
     SEC_COUNT=$((SEC_COUNT + 1))
 done
