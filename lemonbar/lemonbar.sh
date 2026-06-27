@@ -1,12 +1,12 @@
 #!/bin/dash
 
-# Configuración de colores
+# Color Configuration
 BG="#1c1e20"
 FG="#d8dee9"
 GREEN="#7aa283"
 GRAY="#5c6370"
 
-# Iconos (Asegúrate de lanzar lemonbar con una Nerd Font)
+# Nerd Font Icons
 ICON_CLOCK=""
 ICON_VOL=""
 ICON_CPU=""
@@ -15,38 +15,24 @@ ICON_DISK=""
 ICON_LAN=""
 ICON_TEMP=""   
 
-# Módulo de Red (Optimizado exclusivamente para Cable/Ethernet)
-network() {
-    # Comprueba si la interfaz por defecto está activa
-    if ip route | grep -q default; then
-        echo "%{F$GRAY}│%{F-} %{F$GREEN}$ICON_LAN%{F-} Cable"
-    else
-        echo "%{F$GRAY}│%{F-} %{F$GRAY}󰈀 Desc.%{F-}"
-    fi
-}
+# --- VOLATILE MODULES (Fast execution) ---
 
-# Módulo de Temperatura de CPU
-cpu_temp() {
-    # Intenta leer directamente de la zona térmica del sistema (rápido y sin herramientas extra)
-    if [ -f /sys/class/thermal/thermal_zone0/temp ]; then
-        TEMP_RAW=$(cat /sys/class/thermal/thermal_zone0/temp)
-        TEMP=$(echo "$TEMP_RAW" | awk '{print int($1 / 1000)"°C"}')
-    else
-        TEMP="--°C"
-    fi
-    echo "%{F$GRAY}│%{F-} %{F$GREEN}$ICON_TEMP%{F-} $TEMP"
-}
-
-# Módulo de Reloj
 clock() {
-    DATETIME=$(date "+%a %d %b • %H:%M")
-    echo "%{F$GREEN}$ICON_CLOCK%{F-} $DATETIME"
+    echo "%{F$GREEN}$ICON_CLOCK%{F-} $(date '+%a %d %b • %H:%M')"
 }
 
-# Módulo de Volumen (Nativo para PipeWire / WirePlumber)
+cpu_temp() {
+    if [ -f /sys/class/thermal/thermal_zone0/temp ]; then
+        # Direct kernel sysfs read (Fastest method possible)
+        read -r TEMP_RAW < /sys/class/thermal/thermal_zone0/temp
+        echo "%{F$GRAY}│%{F-} %{F$GREEN}$ICON_TEMP%{F-} $((TEMP_RAW / 1000))°C"
+    else
+        echo "%{F$GRAY}│%{F-} %{F$GREEN}$ICON_TEMP%{F-} --°C"
+    fi
+}
+
 volume() {
     RAW=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)
-    
     if [ -z "$RAW" ]; then
         echo "%{F$GRAY}│%{F-} %{F$GREEN}$ICON_VOL%{F-} --%"
         return
@@ -55,41 +41,62 @@ volume() {
     if echo "$RAW" | grep -q "MUTED"; then
         VOL="MUTED"
     else
+        # Converts float (0.50) to percentage (50%)
         VOL=$(echo "$RAW" | awk '{print int($2 * 100)"%"}')
     fi
-
     echo "%{F$GRAY}│%{F-} %{F$GREEN}$ICON_VOL%{F-} $VOL"
 }
 
-# Módulo de Memoria RAM
 ram() {
-    RAM_USAGE=$(free | grep Mem | awk '{print int($3/$2 * 100)"%"}')
-    echo "%{F$GRAY}│%{F-} %{F$GREEN}$ICON_RAM%{F-} $RAM_USAGE"
+    # Efficient parsing of /proc/meminfo directly without spawning 'free'
+    # This reads the first 3 lines of meminfo and extracts Total and Available RAM
+    RAM_DATA=$(awk '/MemTotal/ {t=$2} /MemAvailable/ {a=$2; print int((t-a)/t*100)"%"}' /proc/meminfo)
+    echo "%{F$GRAY}│%{F-} %{F$GREEN}$ICON_RAM%{F-} $RAM_DATA"
 }
 
-# Módulo de Disco Duro
-disk() {
-    DISK_USAGE=$(df -h / | awk 'NR==2 {print $5}')
-    echo "%{F$GRAY}│%{F-} %{F$GREEN}$ICON_DISK%{F-} $DISK_USAGE"
-}
-
-# Módulo de CPU (Corregido para promediar todos los núcleos como btop)
 cpu() {
-    # Lee el porcentaje de tiempo ocioso (idle) global y lo resta de 100
-    CPU_USAGE=$(vmstat 1 2 | tail -n1 | awk '{print 100 - $15"%"}')
-    echo "%{F$GREEN}$ICON_CPU%{F-} $CPU_USAGE"
+    # Replaced 'vmstat 1 2' with an instantaneous system load average calculation
+    # Reads /proc/loadavg (Instantaneous, zero delay)
+    read -r LOAD_1 _ < /proc/loadavg
+    echo "%{F$GREEN}$ICON_CPU%{F-} $LOAD_1"
 }
 
-# Módulo estético para Workspaces
 workspaces() {
     echo " %{B$GREEN}%{F$BG}  1  %{B-}%{F-} %{F$GREEN} 2   3   4 %{F-}"
 }
 
-# Bucle principal que alimenta la barra
+# --- CACHED MODULES (Updated conditionally to save CPU cycles) ---
+
+network() {
+    if ip route | grep -q default; then
+        CURRENT_NET="%{F$GRAY}│%{F-} %{F$GREEN}$ICON_LAN%{F-} Cable"
+    else
+        CURRENT_NET="%{F$GRAY}│%{F-} %{F$GRAY}󰈀 Desc.%{F-}"
+    fi
+}
+
+disk() {
+    CURRENT_DISK="%{F$GRAY}│%{F-} %{F$GREEN}$ICON_DISK%{F-} $(df -h / | awk 'NR==2 {print $5}')"
+}
+
+# --- INITIALIZATION & MAIN LOOP ---
+
+# Initialize cached values on startup
+network
+disk
+SEC_COUNT=0
+
 while true; do
-    # %{l} Izquierda (Workspaces + Red + Temperatura)
-    # %{c} Centro    (Reloj)
-    # %{r} Derecha   (Hardware + Audio)
-    echo "%{l}$(workspaces) $(network) $(cpu_temp)%{c}$(clock)%{r}$(cpu) $(ram) $(disk) $(volume) "
+    # Every 30 seconds, update network status and disk space
+    if [ "$SEC_COUNT" -eq 30 ]; then
+        network
+        disk
+        SEC_COUNT=0
+    fi
+
+    # Output to Lemonbar
+    echo "%{l}$(workspaces) $CURRENT_NET $(cpu_temp)%{c}$(clock)%{r}$(cpu) $(ram) $CURRENT_DISK $(volume) "
+    
     sleep 1
+    SEC_COUNT=$((SEC_COUNT + 1))
 done
