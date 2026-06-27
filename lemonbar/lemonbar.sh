@@ -57,12 +57,24 @@ ram() {
 cpu() {
     # Replaced 'vmstat 1 2' with an instantaneous system load average calculation
     # Reads /proc/loadavg (Instantaneous, zero delay)
-    read -r LOAD_1 _ < /proc/loadavg
-    echo "%{F$GREEN}$ICON_CPU%{F-} $LOAD_1"
+    CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8"%"}')
+    echo "%{F$GREEN}$ICON_CPU%{F-} $CPU_USAGE"
 }
 
 workspaces() {
-    echo " %{B$GREEN}%{F$BG}  1  %{B-}%{F-} %{F$GREEN} 2   3   4 %{F-}"
+    FOCUSED=$(bspc query -D -d focused --names 2>/dev/null)
+    OUT=""
+    # Iteramos sobre los 4 escritorios
+    for i in 1 2 3 4; do
+        if [ "$i" = "$FOCUSED" ]; then
+            # Si es el activo, ponle fondo verde y texto oscuro
+            OUT="$OUT %{B$GREEN}%{F$BG}  $i  %{B-}%{F-} "
+        else
+            # Si no es el activo, ponle texto verde normal
+            OUT="$OUT %{F$GREEN} $i %{F-} "
+        fi
+    done
+    echo "$OUT"
 }
 
 # --- CACHED MODULES (Updated conditionally to save CPU cycles) ---
