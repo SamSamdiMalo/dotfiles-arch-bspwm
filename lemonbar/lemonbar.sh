@@ -69,7 +69,7 @@ workspaces() {
 
 network() {
     if ip route | grep -q default; then
-        CURRENT_NET="%{F$GRAY}│%{F-} %{F$GREEN}$ICON_LAN%{F-} Cable"
+        CURRENT_NET="%{F$GRAY}│%{F-} %{F$GREEN}$ICON_LAN%{F-} Enthernet"
     else
         CURRENT_NET="%{F$GRAY}│%{F-} %{F$GRAY}󰈀 Desc.%{F-}"
     fi
